@@ -1,0 +1,32 @@
+name: Build and Run OpenAiCodeReview By Main Maven Jar
+
+on:
+  push:
+    branches:
+      - github-master
+  pull_request:
+    branches:
+      - github-master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: '2'
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+
+      - name: Copy open-ai-code-review-sdk JAR
+        run: mvn dependency:copy -Dartifact=com.xxliang.middleware:open-ai-code-review:1.0 -DoutputDirectory=./target/lib
+
+      - name: Run Code Review
+        run: java -jar ./libs/open-ai-code-review-sdk-1.0.jar
+
