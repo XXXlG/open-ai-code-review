@@ -26,6 +26,6 @@ jobs:
 
       - name: Run Java code
         run: |  
-          cd open-ai-code-review-sdk/src/test/java
-          javac com/xxliang/middleware/sdk//OpenAiCodeReview.java
-          java com/xxliang.middleware/sdk/testOpenAiCodeReview
+          cd open-ai-code-review-sdk/src/java
+          javac com/xxliang/middleware/sdk/OpenAiCodeReview.java
+          java com/xxliang/middleware/sdk/OpenAiCodeReview
