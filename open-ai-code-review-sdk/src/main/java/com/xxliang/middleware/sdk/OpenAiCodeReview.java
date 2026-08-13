@@ -83,7 +83,7 @@ public class OpenAiCodeReview {
      */
     public static String writeLog(String log) throws GitAPIException, IOException {
         String LOG_URI = "https://github.com/XXXlG/-open-ai-code-review-log.git";
-        String token = "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";
+        String token = System.getenv("GITHUB_TOKEN");
         String username = "XXXlG";
         File repoDir = new File("repo");
         Git git = null;
