@@ -31,7 +31,8 @@ public class OpenAiCodeReview {
             System.out.println(reviewResult);
 
             System.out.println("持久化日志...");
-            String saveAdd = writeLog(reviewResult);
+            String token = System.getenv("GITHUB_TOKEN");
+            String saveAdd = writeLog(token,reviewResult);
             System.out.println("持久化日志成功✅,保存地址: "+saveAdd);
         } catch (Exception e) {
             System.err.println("代码审查失败：" + e.getMessage());
@@ -81,9 +82,8 @@ public class OpenAiCodeReview {
     /**
      * 代码审计的地址：
      */
-    public static String writeLog(String log) throws GitAPIException, IOException {
+    public static String writeLog(String token , String log) throws GitAPIException, IOException {
         String LOG_URI = "https://github.com/XXXlG/-open-ai-code-review-log.git";
-        String token = System.getenv("GITHUB_TOKEN");
         String username = "XXXlG";
         File repoDir = new File("repo");
         Git git = null;

@@ -15,8 +15,8 @@ public class ApiTest {
         String reviewResult = client.sendMessage(prompt);
         System.out.println(reviewResult);
 
-
-        String s = OpenAiCodeReview.writeLog(reviewResult);
+        String token = System.getenv("GITHUB_TOKEN");
+        String s = OpenAiCodeReview.writeLog(token,reviewResult);
         System.out.println("保存地址："+s);
     }
 }
