@@ -1,10 +1,14 @@
 package com.xxliang.middleware.sdk;
 
 import com.xxliang.middleware.sdk.infrastructure.GeminiApiClient;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
 
 public class OpenAiCodeReview {
     public static void main(String[] args) {
@@ -25,7 +29,10 @@ public class OpenAiCodeReview {
             
             System.out.println("审查结果：");
             System.out.println(reviewResult);
-            
+
+            System.out.println("持久化日志...");
+            String saveAdd = writeLog(reviewResult);
+            System.out.println("持久化日志成功✅,保存地址: "+saveAdd);
         } catch (Exception e) {
             System.err.println("代码审查失败：" + e.getMessage());
             e.printStackTrace();
@@ -38,7 +45,7 @@ public class OpenAiCodeReview {
      * @throws IOException 执行命令失败
      * @throws InterruptedException 进程被中断
      */
-    private static String getGitDiff() throws IOException, InterruptedException {
+    public static String getGitDiff() throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder("git", "diff", "HEAD~1", "HEAD");
         processBuilder.directory(null); // 使用当前目录
         
@@ -66,7 +73,77 @@ public class OpenAiCodeReview {
             }
             throw new RuntimeException("git diff 执行失败，退出码：" + exitCode + "，错误信息：" + errorMsg);
         }
-        
+
         return diffCode.toString();
+    }
+
+
+    /**
+     * 代码审计的地址：
+     */
+    public static String writeLog(String log) throws GitAPIException, IOException {
+        String LOG_URI = "https://github.com/XXXlG/-open-ai-code-review-log.git";
+        String token = "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";
+        String username = "XXXlG";
+        File repoDir = new File("repo");
+        Git git = null;
+
+        if (repoDir.exists() && new File(repoDir, ".git").exists()) {
+            // ✅ 仓库已存在，直接打开
+            git = Git.open(repoDir);
+            System.out.println("打开已有仓库: " + repoDir.getAbsolutePath());
+        } else {
+            // ❌ 仓库不存在，需要克隆
+            if (repoDir.exists()) {
+                deleteDirectory(repoDir);  // 如果目录存在但不是 Git 仓库，删除
+            }
+            git = Git.cloneRepository()
+                    .setURI(LOG_URI)
+                    .setDirectory(repoDir)
+                    .setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, token))
+                    .call();
+            System.out.println("克隆成功: " + repoDir.getAbsolutePath());
+        }
+
+
+        String dataFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+
+        File dataFolde = new File("repo/" + dataFolderName);
+
+        if(!dataFolde.exists()){
+            dataFolde.mkdirs();
+        }
+
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        String fileName = uuid + ".md";
+        File newFile = new File(dataFolde, fileName);
+
+        newFile.createNewFile();
+
+        try(FileWriter fileWriter = new FileWriter(newFile)){
+            fileWriter.write(log);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        git.add().addFilepattern(dataFolderName+"/"+fileName).call();
+        git.commit().setMessage("ADD new file").call();
+        git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, token)).call();
+
+
+//        https://github.com/XXXlG/-open-ai-code-review-log/tree/master/2026-08-13
+        return LOG_URI.substring(0, LOG_URI.length() - 4) +"/tree/master/"+dataFolderName+"/"+fileName;
+    }
+    // 递归删除目录的辅助方法
+    private static void deleteDirectory(File dir) {
+        if (dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    deleteDirectory(file);
+                }
+            }
+        }
+        dir.delete();
     }
 }
