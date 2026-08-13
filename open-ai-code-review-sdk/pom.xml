@@ -68,6 +68,7 @@
             <artifactId>jackson-annotations</artifactId>
             <version>2.13.3</version>
         </dependency>
+        <!--通过Java程序来操作git仓库的依赖-->
         <dependency>
             <groupId>org.eclipse.jgit</groupId>
             <artifactId>org.eclipse.jgit</artifactId>
