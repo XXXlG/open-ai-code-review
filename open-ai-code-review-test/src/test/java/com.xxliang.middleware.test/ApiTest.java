@@ -2,7 +2,6 @@ package com.xxliang.middleware.test;
 
 
 import com.xxliang.middleware.sdk.infrastructure.GeminiApiClient;
-import com.xxliang.middleware.sdk.types.utils.BearerTokenUtils;
 
 import java.io.IOException;
 
