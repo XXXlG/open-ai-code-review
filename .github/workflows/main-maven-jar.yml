@@ -24,6 +24,9 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
+      - name: Build with Maven
+        run: mvn clean install
+
       - name: Copy open-ai-code-review-sdk JAR
         run: mvn dependency:copy -Dartifact=com.xxliang.middleware:open-ai-code-review:1.0 -DoutputDirectory=./target/lib
 

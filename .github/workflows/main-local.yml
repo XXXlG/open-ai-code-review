@@ -3,10 +3,12 @@ name: Java Code Review
 on:
   push:
     branches:
-      - github-master
+#      - github-master
+      - close
   pull_request:
     branches:
-      - github-master
+#      - github-master
+      - close
 
 jobs:
   build-and-run:
