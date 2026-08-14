@@ -1,13 +1,17 @@
 package com.xxliang.middleware.sdk;
 
+import com.xxliang.middleware.sdk.domain.model.FeishuConfig;
+import com.xxliang.middleware.sdk.infrastructure.FeishuNotifier;
 import com.xxliang.middleware.sdk.infrastructure.GeminiApiClient;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
+import javax.swing.text.html.Option;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 public class OpenAiCodeReview {
@@ -38,6 +42,9 @@ public class OpenAiCodeReview {
             String token = System.getenv("MY_GITHUB_TOKEN");
             String saveAdd = writeLog(token,reviewResult);
             System.out.println("持久化日志成功✅,保存地址: "+saveAdd);
+            
+            // 发送飞书通知
+            sendFeishuNotification(reviewResult, saveAdd);
         } catch (Exception e) {
             System.err.println("代码审查失败：" + e.getMessage());
             e.printStackTrace();
@@ -149,5 +156,46 @@ public class OpenAiCodeReview {
             }
         }
         dir.delete();
+    }
+    
+    /**
+     * 发送飞书通知
+     * @param reviewResult 审查结果
+     * @param logUrl 日志地址
+     */
+    private static void sendFeishuNotification(String reviewResult, String logUrl) {
+        try {
+            // 从环境变量获取飞书配置
+            String appId = Optional.ofNullable(System.getenv("FEISHU_APP_ID")).orElse("cli_aaf431f6aff89be3");
+            String appSecret = Optional.ofNullable(System.getenv("FEISHU_APP_SECRET")).orElse("tcalFdFUZ7GLhzq10hDmVgWc5zZjNZtP");
+            String receiveId = Optional.ofNullable(System.getenv("FEISHU_RECEIVE_ID")).orElse("oc_aa491d639be04645d17e41a0ebac60b1");
+            String receiveIdType = Optional.ofNullable(System.getenv("FEISHU_RECEIVE_ID_TYPE")).orElse("chat_id");
+            
+            // 检查配置是否完整
+            if (appId == null || appSecret == null || receiveId == null) {
+                System.out.println("⚠️ 飞书配置不完整，跳过飞书通知");
+                System.out.println("提示：请设置环境变量 FEISHU_APP_ID, FEISHU_APP_SECRET, FEISHU_RECEIVE_ID");
+                return;
+            }
+            
+            // 默认发送到群聊
+            if (receiveIdType == null || receiveIdType.trim().isEmpty()) {
+                receiveIdType = "chat_id";
+            }
+            
+            System.out.println("正在发送飞书通知...");
+            FeishuConfig config = new FeishuConfig(appId, appSecret, receiveId, receiveIdType);
+            FeishuNotifier notifier = new FeishuNotifier(config);
+            
+            boolean success = notifier.sendRichTextMessage("代码审查完成", reviewResult, logUrl);
+            
+            if (success) {
+                System.out.println("飞书通知发送成功✅");
+            } else {
+                System.out.println("飞书通知发送失败❌");
+            }
+        } catch (Exception e) {
+            System.err.println("发送飞书通知时发生异常：" + e.getMessage());
+        }
     }
 }
