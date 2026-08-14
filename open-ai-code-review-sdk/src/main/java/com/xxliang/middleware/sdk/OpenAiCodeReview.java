@@ -14,7 +14,11 @@ public class OpenAiCodeReview {
     public static void main(String[] args) {
         try {
             // 从环境变量获取 API Key
-            final String apiKey = "sk-943AOdCND4GGWNHnEc94095a42334f61B9B6BaF5F8454648";
+            String apiKey = System.getenv("AIHUBMIX_API_KEY");
+            if (apiKey == null || apiKey.trim().isEmpty()) {
+                System.err.println("错误：未设置环境变量 AIHUBMIX_API_KEY");
+                return;
+            }
 
             // 获取 git diff 差异信息
             String diffCode = getGitDiff();

@@ -31,3 +31,4 @@ jobs:
         run: java -jar ./open-ai-code-review-sdk/target/open-ai-code-review-sdk-1.0.jar
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          AIHUBMIX_API_KEY: sk-943AOdCND4GGWNHnEc94095a42334f61B9B6BaF5F8454648
