@@ -166,10 +166,10 @@ public class OpenAiCodeReview {
     private static void sendFeishuNotification(String reviewResult, String logUrl) {
         try {
             // 从环境变量获取飞书配置
-            String appId = Optional.ofNullable(System.getenv("FEISHU_APP_ID")).orElse("cli_aaf431f6aff89be3");
-            String appSecret = Optional.ofNullable(System.getenv("FEISHU_APP_SECRET")).orElse("tcalFdFUZ7GLhzq10hDmVgWc5zZjNZtP");
-            String receiveId = Optional.ofNullable(System.getenv("FEISHU_RECEIVE_ID")).orElse("oc_aa491d639be04645d17e41a0ebac60b1");
-            String receiveIdType = Optional.ofNullable(System.getenv("FEISHU_RECEIVE_ID_TYPE")).orElse("chat_id");
+            String appId = System.getenv("FEISHU_APP_ID");
+            String appSecret = System.getenv("FEISHU_APP_SECRET");
+            String receiveId = System.getenv("FEISHU_RECEIVE_ID");
+            String receiveIdType = System.getenv("FEISHU_RECEIVE_ID_TYPE");
             
             // 检查配置是否完整
             if (appId == null || appSecret == null || receiveId == null) {
