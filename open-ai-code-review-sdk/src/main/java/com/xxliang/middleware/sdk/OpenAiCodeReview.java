@@ -35,7 +35,7 @@ public class OpenAiCodeReview {
             System.out.println(reviewResult);
 
             System.out.println("持久化日志...");
-            String token = System.getenv("GITHUB_TOKEN");
+            String token = System.getenv("MY_GITHUB_TOKEN");
             String saveAdd = writeLog(token,reviewResult);
             System.out.println("持久化日志成功✅,保存地址: "+saveAdd);
         } catch (Exception e) {

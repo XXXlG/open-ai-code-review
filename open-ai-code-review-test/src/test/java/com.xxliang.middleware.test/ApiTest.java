@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class ApiTest {
     public static void main(String[] args) throws IOException, GitAPIException {
-        String apiKey = "sk-943AOdCND4GGWNHnEc94095a42334f61B9B6BaF5F8454648";
+        String apiKey = "sk-943AO";
         GeminiApiClient client = new GeminiApiClient(apiKey);
         String prompt = "你好，你叫什么";
         String reviewResult = client.sendMessage(prompt);
