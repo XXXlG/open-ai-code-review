@@ -153,7 +153,13 @@
                             <include>com.fasterxml.jackson.core:jackson-databind:</include>
                             <include>com.fasterxml.jackson.core:jackson-annotations:</include>
                             <include>org.eclipse.jgit:org.eclipse.jgit:</include>
+                            <!-- 飞书SDK及其依赖 -->
                             <include>com.larksuite.oapi:oapi-sdk:</include>
+                            <include>com.google.code.gson:gson:</include>
+                            <include>commons-codec:commons-codec:</include>
+                            <include>org.apache.httpcomponents:httpclient:</include>
+                            <include>org.apache.httpcomponents:httpcore:</include>
+                            <include>org.apache.httpcomponents:httpmime:</include>
                         </includes>
                     </artifactSet>
                 </configuration>
