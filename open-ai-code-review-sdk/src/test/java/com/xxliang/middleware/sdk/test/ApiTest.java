@@ -8,7 +8,13 @@ import org.junit.Test;
  * API测试类
  */
 public class ApiTest {
-    
+
+    public void test_commit(){
+        System.out.println("aaaaa1");
+        System.out.println("aaaaa2");
+        System.out.println("aaaaa3");
+    }
+
     /**
      * 测试飞书文本消息发送
      * 注意：运行前需要设置环境变量或直接在代码中配置飞书信息
