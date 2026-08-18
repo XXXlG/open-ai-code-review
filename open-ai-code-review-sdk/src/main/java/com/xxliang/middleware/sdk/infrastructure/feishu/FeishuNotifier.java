@@ -1,10 +1,9 @@
-package com.xxliang.middleware.sdk.infrastructure;
+package com.xxliang.middleware.sdk.infrastructure.feishu;
 
 import com.lark.oapi.Client;
 import com.lark.oapi.service.im.v1.model.CreateMessageReq;
 import com.lark.oapi.service.im.v1.model.CreateMessageReqBody;
 import com.lark.oapi.service.im.v1.model.CreateMessageResp;
-import com.xxliang.middleware.sdk.domain.model.FeishuConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +16,9 @@ public class FeishuNotifier {
     private static final Logger logger = LoggerFactory.getLogger(FeishuNotifier.class);
     
     private final Client client;
+
     private final FeishuConfig config;
-    
+
     /**
      * 构造函数
      * @param config 飞书配置信息
@@ -155,5 +155,47 @@ public class FeishuNotifier {
             return message;
         }
         return message.substring(0, maxLength) + "...（内容过长已截断）";
+    }
+
+
+    /**
+     * 发送飞书通知
+     * @param reviewResult 审查结果
+     * @param logUrl 日志地址
+     */
+    public void sendFeishuNotification(String reviewResult, String logUrl) {
+        try {
+            // 从环境变量获取飞书配置
+            String appId = System.getenv("FEISHU_APP_ID");
+            String appSecret = System.getenv("FEISHU_APP_SECRET");
+            String receiveId = System.getenv("FEISHU_RECEIVE_ID");
+            String receiveIdType = System.getenv("FEISHU_RECEIVE_ID_TYPE");
+
+            // 检查配置是否完整
+            if (appId == null || appSecret == null || receiveId == null) {
+                System.out.println("⚠️ 飞书配置不完整，跳过飞书通知");
+                System.out.println("提示：请设置环境变量 FEISHU_APP_ID, FEISHU_APP_SECRET, FEISHU_RECEIVE_ID");
+                return;
+            }
+
+            // 默认发送到群聊
+            if (receiveIdType == null || receiveIdType.trim().isEmpty()) {
+                receiveIdType = "chat_id";
+            }
+
+            System.out.println("正在发送飞书通知...");
+            FeishuConfig config = new FeishuConfig(appId, appSecret, receiveId, receiveIdType);
+            FeishuNotifier notifier = new FeishuNotifier(config);
+
+            boolean success = notifier.sendRichTextMessage("代码审查完成", reviewResult, logUrl);
+
+            if (success) {
+                System.out.println("飞书通知发送成功✅");
+            } else {
+                System.out.println("飞书通知发送失败❌");
+            }
+        } catch (Exception e) {
+            System.err.println("发送飞书通知时发生异常：" + e.getMessage());
+        }
     }
 }

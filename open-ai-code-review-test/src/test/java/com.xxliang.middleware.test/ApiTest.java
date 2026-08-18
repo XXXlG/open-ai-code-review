@@ -2,7 +2,7 @@ package com.xxliang.middleware.test;
 
 
 import com.xxliang.middleware.sdk.OpenAiCodeReview;
-import com.xxliang.middleware.sdk.infrastructure.GeminiApiClient;
+import com.xxliang.middleware.sdk.infrastructure.gemini.impl.GeminiApiClient;
 import org.eclipse.jgit.api.errors.GitAPIException;
 
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.io.IOException;
 public class ApiTest {
     public static void main(String[] args) throws IOException, GitAPIException {
         String apiKey = "sk-943AO";
-        GeminiApiClient client = new GeminiApiClient(apiKey);
+        GeminiApiClient client = new GeminiApiClient(GeminiApiClient.DEFAULT_API_URL,apiKey);
         String prompt = "你好，你叫什么";
         String reviewResult = client.sendMessage(prompt);
         System.out.println(reviewResult);

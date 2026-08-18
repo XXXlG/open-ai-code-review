@@ -1,21 +1,50 @@
 package com.xxliang.middleware.sdk;
 
-import com.xxliang.middleware.sdk.domain.model.FeishuConfig;
-import com.xxliang.middleware.sdk.infrastructure.FeishuNotifier;
-import com.xxliang.middleware.sdk.infrastructure.GeminiApiClient;
+import com.xxliang.middleware.sdk.domain.service.impl.OpenAiCodeReviewService;
+import com.xxliang.middleware.sdk.infrastructure.feishu.FeishuConfig;
+import com.xxliang.middleware.sdk.infrastructure.feishu.FeishuNotifier;
+import com.xxliang.middleware.sdk.infrastructure.gemini.IOpenAI;
+import com.xxliang.middleware.sdk.infrastructure.gemini.impl.GeminiApiClient;
+import com.xxliang.middleware.sdk.infrastructure.git.GitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
-import javax.swing.text.html.Option;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
 public class OpenAiCodeReview {
     public static void main(String[] args) {
+
+        GitCommand gitCommand = new GitCommand(
+                getEnv("GITHUB_REVIEW_LOG_URI"), // https://github.com/XXXlG/-open-ai-code-review-log.git
+                getEnv("MY_GITHUB_USERNAME"),
+                getEnv("MY_GITHUB_TOKEN"),  // write_log的日志密令
+                getEnv("COMMIT_PROJECT"),
+                getEnv("COMMIT_BRANCH"),
+                getEnv("COMMIT_AUTHOR"),
+                getEnv("COMMIT_MESSAGE")
+        );
+
+        FeishuConfig feishuConfig = new FeishuConfig(
+                getEnv("FEISHU_APP_ID"),
+                getEnv("FEISHU_APP_SECRET"),
+                getEnv("FEISHU_RECEIVE_ID"),
+                getEnv("FEISHU_RECEIVE_ID_TYPE")
+        );
+
+        String aihubmixApiKey = System.getenv("AIHUBMIX_API_KEY");
+
+        IOpenAI openAI = new GeminiApiClient(GeminiApiClient.DEFAULT_API_URL,aihubmixApiKey);
+
+        OpenAiCodeReviewService openAiCodeReviewService = new OpenAiCodeReviewService(gitCommand, openAI, new FeishuNotifier(feishuConfig));
+
+        openAiCodeReviewService.exec();
+
+
+/**
         try {
             // 从环境变量获取 API Key
             String apiKey = System.getenv("AIHUBMIX_API_KEY");
@@ -31,7 +60,7 @@ public class OpenAiCodeReview {
             System.out.println("\n==================== AI 代码审查 ====================\n");
             
             // 调用 Gemini API 进行代码审查
-            GeminiApiClient client = new GeminiApiClient(apiKey);
+            GeminiApiClient client = new GeminiApiClient(GeminiApiClient.DEFAULT_API_URL,System.getenv("AIHUBMIX_API_KEY"));
             String prompt = "你是一个高级编程架构师，精通各类场景方案、架构设计、和编程语言。请对以下 git diff 代码变更进行代码审查，指出潜在问题、改进建议和最佳实践：\n\n" + diffCode;
             String reviewResult = client.sendMessage(prompt);
             
@@ -49,8 +78,19 @@ public class OpenAiCodeReview {
             System.err.println("代码审查失败：" + e.getMessage());
             e.printStackTrace();
         }
+
+ */
     }
-    
+
+
+    private static String getEnv(String key) {
+        String value = System.getenv(key);
+        if (null == value || value.isEmpty()) {
+            throw new RuntimeException("value is null");
+        }
+        return value;
+    }
+
     /**
      * 获取 git diff 差异信息
      * @return git diff 输出的差异内容
@@ -170,25 +210,25 @@ public class OpenAiCodeReview {
             String appSecret = System.getenv("FEISHU_APP_SECRET");
             String receiveId = System.getenv("FEISHU_RECEIVE_ID");
             String receiveIdType = System.getenv("FEISHU_RECEIVE_ID_TYPE");
-            
+
             // 检查配置是否完整
             if (appId == null || appSecret == null || receiveId == null) {
                 System.out.println("⚠️ 飞书配置不完整，跳过飞书通知");
                 System.out.println("提示：请设置环境变量 FEISHU_APP_ID, FEISHU_APP_SECRET, FEISHU_RECEIVE_ID");
                 return;
             }
-            
+
             // 默认发送到群聊
             if (receiveIdType == null || receiveIdType.trim().isEmpty()) {
                 receiveIdType = "chat_id";
             }
-            
+
             System.out.println("正在发送飞书通知...");
             FeishuConfig config = new FeishuConfig(appId, appSecret, receiveId, receiveIdType);
             FeishuNotifier notifier = new FeishuNotifier(config);
-            
+
             boolean success = notifier.sendRichTextMessage("代码审查完成", reviewResult, logUrl);
-            
+
             if (success) {
                 System.out.println("飞书通知发送成功✅");
             } else {

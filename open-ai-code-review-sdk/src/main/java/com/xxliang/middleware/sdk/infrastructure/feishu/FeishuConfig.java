@@ -1,4 +1,4 @@
-package com.xxliang.middleware.sdk.domain.model;
+package com.xxliang.middleware.sdk.infrastructure.feishu;
 
 /**
  * 飞书配置类

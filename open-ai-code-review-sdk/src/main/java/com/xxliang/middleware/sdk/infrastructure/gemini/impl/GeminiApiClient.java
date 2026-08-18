@@ -1,8 +1,10 @@
-package com.xxliang.middleware.sdk.infrastructure;
+package com.xxliang.middleware.sdk.infrastructure.gemini.impl;
 
 import com.alibaba.fastjson2.JSON;
 import com.xxliang.middleware.sdk.domain.model.GeminiRequest;
 import com.xxliang.middleware.sdk.domain.model.GeminiResponse;
+import com.xxliang.middleware.sdk.infrastructure.gemini.IOpenAI;
+import org.eclipse.jgit.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -17,17 +19,25 @@ import java.util.List;
 /**
  * Gemini API 调用工具类
  */
-public class GeminiApiClient {
-    
-    private static final String API_URL = "https://aihubmix.com/gemini/v1beta/models/gemini-3.5-flash-lite-free:generateContent";
+public class GeminiApiClient implements IOpenAI {
+
+    public final static String DEFAULT_API_URL = "https://aihubmix.com/gemini/v1beta/models/gemini-3.5-flash-lite-free:generateContent";
+    private final String API_URL;
     private final String apiKey;
 
-    public GeminiApiClient(String apiKey) {
+    public GeminiApiClient(String apiUrl, String apiKey) {
+        if(StringUtils.isEmptyOrNull(apiUrl)) {
+            API_URL = DEFAULT_API_URL;
+        }else {
+            API_URL = apiUrl;
+        }
         if (apiKey == null || apiKey.trim().isEmpty()) {
             throw new IllegalArgumentException("API Key 不能为空");
         }
         this.apiKey = apiKey;
     }
+
+
 
     /**
      * 发送消息到 Gemini API

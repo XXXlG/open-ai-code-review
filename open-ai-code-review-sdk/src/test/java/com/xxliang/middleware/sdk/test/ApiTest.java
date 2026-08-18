@@ -1,7 +1,7 @@
 package com.xxliang.middleware.sdk.test;
 
-import com.xxliang.middleware.sdk.domain.model.FeishuConfig;
-import com.xxliang.middleware.sdk.infrastructure.FeishuNotifier;
+import com.xxliang.middleware.sdk.infrastructure.feishu.FeishuConfig;
+import com.xxliang.middleware.sdk.infrastructure.feishu.FeishuNotifier;
 import org.junit.Test;
 
 /**
