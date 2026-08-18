@@ -1,14 +1,12 @@
-name: Build and Run OpenAiCodeReview By Main Maven Jar
+name: Build and Run OpenAiCodeReview By Remote Jar
 
 on:
   push:
     branches:
-#      - github-master
-      - close
+      - github-master
   pull_request:
     branches:
-#      - github-master
-      - close
+      - github-master
 
 jobs:
   build:
@@ -26,9 +24,12 @@ jobs:
           distribution: 'adopt'
           java-version: '17'
 
-      - name: Build with Maven
-        run: mvn clean install
+#      - name: Build with Maven
+#        run: mvn clean install
 
+
+      - name: Download open-ai-code-review-sdk JAR
+        run: wget -0 ./open-ai-code-review-sdk/target/open-ai-code-review-sdk-1.0.jar https://github.com/XXXlG/open-ai-code-review/releases/download/1.x/open-ai-code-review-sdk-1.0.jar
 
       - name: Get repository name
         id: repo-name
@@ -52,7 +53,7 @@ jobs:
           echo "Branch name is ${{ env.BRANCH_NAME }}"
           echo "Commit author is ${{ env.COMMIT_AUTHOR }}"
           echo "Commit message is ${{ env.COMMIT_MESSAGE }}"      
-      
+
 
       - name: Run Code Review
         run: java -jar ./open-ai-code-review-sdk/target/open-ai-code-review-sdk-1.0.jar
@@ -72,3 +73,4 @@ jobs:
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
           FEISHU_RECEIVE_ID: ${{ secrets.FEISHU_RECEIVE_ID }}
           FEISHU_RECEIVE_ID_TYPE: ${{ secrets.FEISHU_RECEIVE_ID_TYPE }}
+#
