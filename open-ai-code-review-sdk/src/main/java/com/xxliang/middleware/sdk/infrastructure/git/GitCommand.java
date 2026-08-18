@@ -110,7 +110,8 @@ public class GitCommand {
         }
 
         String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 4);
-        String fileName =  project + "-" + branch + "-" + author + "-" +System.currentTimeMillis()+ "-"+ uuid + ".md";
+        String fileName =  project + "-" + branch + "-" + author + "-" +System.currentTimeMillis()+ "-" + uuid + ".md";
+        fileName = fileName.trim();
         File newFile = new File(dataFolde, fileName);
 
         newFile.createNewFile();
