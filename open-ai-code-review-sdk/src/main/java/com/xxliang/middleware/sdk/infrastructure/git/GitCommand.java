@@ -109,9 +109,9 @@ public class GitCommand {
             dataFolde.mkdirs();
         }
 
+        String nickName = author;
         String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 4);
-        String fileName =  project + "-" + branch + "-" + author + "-" +System.currentTimeMillis()+ "-" + uuid + ".md";
-        fileName = fileName.trim();
+        String fileName =  project + "-" + branch + "-" + nickName.replaceAll("\\s+", "") + "-" +System.currentTimeMillis()+ "-" + uuid + ".md";
         File newFile = new File(dataFolde, fileName);
 
         newFile.createNewFile();
@@ -122,13 +122,13 @@ public class GitCommand {
             throw new RuntimeException(e);
         }
 
-        git.add().addFilepattern(dataFolderName+"/"+fileName).call();
+        git.add().addFilepattern(project+"/"+dataFolderName+"/"+fileName).call();
         git.commit().setMessage("ADD new file").call();
         git.push().setCredentialsProvider(new UsernamePasswordCredentialsProvider(githubUsername, githubToken)).call();
 
 
 //        https://github.com/XXXlG/-open-ai-code-review-log/tree/master/2026-08-13
-        return githubReviewLogUri.substring(0, githubReviewLogUri.length() - 4) +"/tree/master/"+dataFolderName+"/"+fileName;
+        return githubReviewLogUri.substring(0, githubReviewLogUri.length() - 4) +"/tree/master/"+project+"/"+dataFolderName+"/"+fileName;
     }
     // 递归删除目录的辅助方法
     private static void deleteDirectory(File dir) {
