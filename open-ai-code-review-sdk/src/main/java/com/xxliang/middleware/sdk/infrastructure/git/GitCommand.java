@@ -109,9 +109,9 @@ public class GitCommand {
             dataFolde.mkdirs();
         }
 
-        String nickName = author;
+        String validName = author.trim().replace(" ", "-").replace("<","-").replace(">","-");
         String uuid = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 4);
-        String fileName =  project + "-" + branch + "-" + nickName.trim().replace(" ", "-") + "-" +System.currentTimeMillis()+ "-" + uuid + ".md";
+        String fileName =  project + "-" + branch + "-" + validName + "-" +System.currentTimeMillis()+ "-" + uuid + ".md";
         File newFile = new File(dataFolde, fileName);
 
         newFile.createNewFile();
