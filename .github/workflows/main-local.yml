@@ -3,10 +3,12 @@ name: Java Code Review
 on:
   push:
     branches:
-      - main
+#      - github-master
+      - close
   pull_request:
     branches:
-      - main
+#      - github-master
+      - close
 
 jobs:
   build-and-run:
@@ -26,6 +28,6 @@ jobs:
 
       - name: Run Java code
         run: |  
-          cd open-ai-code-review-sdk/src/test/java
-          javac com/xxliang/middleware/sdk//OpenAiCodeReview.java
-          java com/xxliang.middleware/sdk/testOpenAiCodeReview
+          cd open-ai-code-review-sdk/src/main/java
+          javac com/xxliang/middleware/sdk/OpenAiCodeReview.java
+          java com/xxliang/middleware/sdk/OpenAiCodeReview
