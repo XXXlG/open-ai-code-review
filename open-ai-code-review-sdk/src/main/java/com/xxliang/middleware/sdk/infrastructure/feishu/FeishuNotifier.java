@@ -75,6 +75,8 @@ public class FeishuNotifier {
     public boolean sendRichTextMessage(String title, String content, String logUrl) {
         try {
             String postContent = buildPostContent(title, content, logUrl);
+            logger.info("DEBUG:----Feishu发送的富文本消息-----\n");
+            logger.info(postContent);
             return sendMessage("post", postContent);
         } catch (Exception e) {
             logger.error("发送飞书富文本消息失败", e);
