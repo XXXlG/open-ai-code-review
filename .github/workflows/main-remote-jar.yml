@@ -29,7 +29,7 @@ jobs:
 
 
       - name: Download open-ai-code-review-sdk JAR
-        run: wget -0 ./open-ai-code-review-sdk/target/open-ai-code-review-sdk-1.0.jar https://github.com/XXXlG/open-ai-code-review/releases/download/1.x/open-ai-code-review-sdk-1.0.jar
+        run: wget -O ./open-ai-code-review-sdk/target/open-ai-code-review-sdk-1.0.jar https://github.com/XXXlG/open-ai-code-review/releases/download/1.x/open-ai-code-review-sdk-1.0.jar
 
       - name: Get repository name
         id: repo-name
