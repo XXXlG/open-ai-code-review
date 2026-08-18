@@ -35,6 +35,7 @@ public abstract class AbstractOpenAiCodeReviewService implements IOpenAiCodeRevi
             String recommend = codeReview(diffCode);
             // 3. 记录评审结果；返回日志地址
             String logUrl = recordCodeReview(recommend);
+            logger.info("持久化成功：地址：{}",logUrl);
             // 4. 发送消息通知；日志地址、通知的内容
             pushMessage(recommend,logUrl);
         } catch (Exception e) {
