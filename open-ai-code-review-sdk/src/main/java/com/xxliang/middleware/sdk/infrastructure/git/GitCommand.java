@@ -80,7 +80,7 @@ public class GitCommand {
      * 代码审计的地址：
      */
     public String writeLog(String log) throws GitAPIException, IOException {
-        File repoDir = new File("repo");
+        File repoDir = new File(project);
         Git git = null;
 
         if (repoDir.exists() && new File(repoDir, ".git").exists()) {
@@ -103,7 +103,7 @@ public class GitCommand {
 
         String dataFolderName = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
 
-        File dataFolde = new File("repo/" + dataFolderName);
+        File dataFolde = new File(project + "/" + dataFolderName);
 
         if(!dataFolde.exists()){
             dataFolde.mkdirs();

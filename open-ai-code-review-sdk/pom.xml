@@ -28,11 +28,11 @@
             <version>${slf4j.version}</version>
         </dependency>
         <!--转而使用ch.qos.logback.classic-->
-<!--        <dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
-        </dependency>-->
+        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

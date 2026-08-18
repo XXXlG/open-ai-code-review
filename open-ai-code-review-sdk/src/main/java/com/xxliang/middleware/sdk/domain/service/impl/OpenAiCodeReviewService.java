@@ -55,6 +55,5 @@ public class OpenAiCodeReviewService extends AbstractOpenAiCodeReviewService {
     @Override
     protected void pushMessage(String reviewResult,String logUrl) throws Exception {
         feishuNotifier.sendFeishuNotification(reviewResult,logUrl);
-        return;
     }
 }
